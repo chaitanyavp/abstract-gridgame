@@ -14,8 +14,7 @@ public abstract class GridGame extends Applet implements ActionListener, MouseLi
 	protected int instructionsPage;
 	private int difficulty = 0;
 	
-	protected int pgrid[][] = new int[10][10]; // Grid that player interacts
-												// with
+	protected int pgrid[][] = new int[10][10]; // Grid that player interacts with											
 
 	public GridGame() {
 		program = new Panel(); // to hold entire program, using cdLayout
@@ -45,8 +44,7 @@ public abstract class GridGame extends Applet implements ActionListener, MouseLi
 
 		JButton menuButton[] = new JButton[3];
 		menuButton[0] = new JButton("Start"); // to start game
-		menuButton[1] = new JButton("Instructions"); // to go to instruction
-														// screen
+		menuButton[1] = new JButton("Instructions"); // to go to instruction screen													/
 		menuButton[2] = new JButton("Exit"); // to exit
 
 		for (int i = 0; i < 3; i++) {
