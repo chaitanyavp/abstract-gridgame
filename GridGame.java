@@ -18,16 +18,14 @@ public abstract class GridGame extends Applet implements ActionListener, MouseLi
 												// with
 
 	public GridGame() {
-		System.out.println("constructor");
-
 		program = new Panel(); // to hold entire program, using cdLayout
 		program.setLayout(cdLayout);
 		program.setBackground(Color.black);
 
 		program.add("menu", createAndGetMenu());
 		program.add("diff", createAndGetDiff());
-		// program.add("inst", createAndGetInst());
-		// program.add("game", createAndGetGame());
+		program.add("inst", createAndGetInst());
+		program.add("game", createAndGetGame());
 		add(program);
 	}
 
@@ -36,7 +34,7 @@ public abstract class GridGame extends Applet implements ActionListener, MouseLi
 		setBackground(Color.black);
 	}
 
-	private Panel createAndGetMenu() {
+	protected Panel createAndGetMenu() {
 		Panel menu = new Panel();
 		menu.setLayout(new BoxLayout(menu, BoxLayout.PAGE_AXIS));
 
