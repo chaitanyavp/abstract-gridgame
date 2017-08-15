@@ -8,8 +8,6 @@ public class Minesweeper extends GridGame {
 	private int mineNum;
 	private int labelNum = 0;
 	private JButton mineButton[][];
-	private boolean mine = false;;
-	private JButton mode;
 
 	public Minesweeper() {
 
@@ -40,11 +38,6 @@ public class Minesweeper extends GridGame {
 		
 		placeMine();
 		Panel buttonGrid = new Panel();
-		mode = new JButton("Mine Mode");
-		mode.addActionListener(this);
-		mode.setActionCommand("enableMode");
-		mode.setBackground(Color.lightGray);
-		mode.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		buttonGrid.setLayout(new GridLayout(10, 10));
 
@@ -59,11 +52,10 @@ public class Minesweeper extends GridGame {
 				mineButton[j][i].addMouseListener(this);
 				mineButton[j][i].setActionCommand("h" + j + "" + i);
 				mineButton[j][i].setBackground(Color.lightGray);
-				mineButton[j][i].setName("a");
+				mineButton[j][i].setName("unflagged");
 				buttonGrid.add(mineButton[j][i]);
 			}
 		}
-		game.add(mode);
 		game.add(buttonGrid);
 		return game;
 	}
@@ -81,11 +73,11 @@ public class Minesweeper extends GridGame {
 		}
 	}
 
-	private boolean gameWon() {
+	private boolean isGameWon() {
 		boolean win = true;
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
-				if (pgrid[j][i] == 1 && !mineButton[j][i].getName().equals("b")) {
+				if (pgrid[j][i] == 1 && !mineButton[j][i].getName().equals("flagged")) {
 					win = false;
 					break;
 				}
@@ -93,22 +85,12 @@ public class Minesweeper extends GridGame {
 		}
 		return win;
 	}
-
-	private void mineMode() {
-		if (!mine) {
-			for (int i = 0; i < 10; i++) {
-				for (int j = 0; j < 10; j++) {
-					mineButton[j][i].setActionCommand("z" + j + "" + i);
-				}
-			}
-		} else {
-			for (int i = 0; i < 10; i++) {
-				for (int j = 0; j < 10; j++) {
-					mineButton[j][i].setActionCommand("h" + j + "" + i);
-				}
-			}
+	
+	private void checkWin(){
+		if(isGameWon()){
+			JOptionPane.showMessageDialog(null, "You Win");
+			System.exit(0);
 		}
-		mine = !mine;
 	}
 
 	private void flood(int x, int y) {
@@ -212,33 +194,27 @@ public class Minesweeper extends GridGame {
 			} else {
 				flood(x, y);
 			}
-		} else if (("" + e.getActionCommand()).charAt(0) == 'z') {
-			int x = Integer.parseInt("" + ("" + e.getActionCommand()).charAt(1));
-			int y = Integer.parseInt("" + ("" + e.getActionCommand()).charAt(2));
-			if (mineButton[x][y].getName().equals("a") && labelNum < mineNum) {
-				mineButton[x][y].setBackground(Color.green);
-				mineButton[x][y].setName("b");
-				labelNum++;
-			} else if (mineButton[x][y].getName().equals("b")) {
-				mineButton[x][y].setBackground(Color.lightGray);
-				mineButton[x][y].setName("a");
-				labelNum--;
-			}
-		}
-
-		else if (e.getActionCommand().equals("enableMode")) {
-			if (!mine)
-				mode.setBackground(Color.green);
-			else
-				mode.setBackground(Color.lightGray);
-			mineMode();
 		}
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		
-
+	    if (arg0.getButton() == MouseEvent.BUTTON3 && arg0.getComponent() instanceof JButton) {  
+	        String actionCommand = ((JButton) arg0.getComponent()).getActionCommand();
+	        
+			int x = Integer.parseInt("" + actionCommand.charAt(1));
+			int y = Integer.parseInt("" + actionCommand.charAt(2));
+			if (mineButton[x][y].getName().equals("unflagged") && labelNum < mineNum) {
+				mineButton[x][y].setBackground(Color.green);
+				mineButton[x][y].setName("flagged");
+				labelNum++;
+			} else if (mineButton[x][y].getName().equals("flagged")) {
+				mineButton[x][y].setBackground(Color.lightGray);
+				mineButton[x][y].setName("unflagged");
+				labelNum--;
+			}
+	    }
+	    checkWin();
 	}
 
 	@Override
