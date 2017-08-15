@@ -10,11 +10,12 @@ public abstract class GridGame extends Applet implements ActionListener, MouseLi
 	protected CardLayout cdLayout = new CardLayout();// to progress through the
 	// screens
 	protected Panel program;// to hold the entire program
-	
+
 	protected int instructionsPage;
 	private int difficulty = 0;
-	
-	protected int pgrid[][] = new int[10][10]; // Grid that player interacts with											
+
+	protected int pgrid[][] = new int[10][10]; // Grid that player interacts
+												// with
 
 	public GridGame() {
 		program = new Panel(); // to hold entire program, using cdLayout
@@ -44,7 +45,8 @@ public abstract class GridGame extends Applet implements ActionListener, MouseLi
 
 		JButton menuButton[] = new JButton[3];
 		menuButton[0] = new JButton("Start"); // to start game
-		menuButton[1] = new JButton("Instructions"); // to go to instruction screen													/
+		menuButton[1] = new JButton("Instructions"); // to go to instruction
+														// screen /
 		menuButton[2] = new JButton("Exit"); // to exit
 
 		for (int i = 0; i < 3; i++) {
@@ -106,7 +108,7 @@ public abstract class GridGame extends Applet implements ActionListener, MouseLi
 	}
 
 	abstract Panel createAndGetInst();
-	
+
 	abstract Panel createAndGetGame();
 
 	public static ImageIcon createImageIcon(String path) {
@@ -140,7 +142,9 @@ public abstract class GridGame extends Applet implements ActionListener, MouseLi
 				break;
 			}
 			}
-		} else if (e.getActionCommand().charAt(0) == 'm') { //To process difficulty choices
+		} else if (e.getActionCommand().charAt(0) == 'm') { // To process
+															// difficulty
+															// choices
 			// difficulty, after
 			// main menu
 			difficulty = Integer.parseInt("" + e.getActionCommand().charAt(1));
@@ -148,8 +152,8 @@ public abstract class GridGame extends Applet implements ActionListener, MouseLi
 		}
 
 	}
-	
-	protected int getDifficulty(){
+
+	protected int getDifficulty() {
 		return difficulty;
 	}
 }
