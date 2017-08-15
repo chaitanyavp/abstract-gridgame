@@ -8,6 +8,8 @@ public class Minesweeper extends GridGame {
 	private int mineNum;
 	private int labelNum = 0;
 	private JButton mineButtons[][];
+	private Panel buttonPanel;
+	private Panel game;
 
 	public Minesweeper() {
 
@@ -25,19 +27,49 @@ public class Minesweeper extends GridGame {
 	@Override
 	Panel createAndGetInst() {
 		Panel inst = new Panel();
+		inst.setLayout(new BoxLayout(inst, BoxLayout.PAGE_AXIS));
+		
+		JLabel space1 = new JLabel("                           ");
+		space1.setFont(new Font("Arial", Font.BOLD, 150));
+		space1.setAlignmentX(Component.CENTER_ALIGNMENT);
+		inst.add(space1);
+		
+		JLabel text[] = {new JLabel("Click on a tile to reveal what's underneath it."), 
+				new JLabel("If you see a number, that is how many bombs are adjacent to it. If you click on a bomb, you lose."),
+				new JLabel("You can right click a tile to flag it. Win by flagging all the bombs.")};
+		for(JLabel sentence:text){
+			sentence.setFont(new Font("Arial", Font.PLAIN, 25));
+			sentence.setAlignmentX(Component.CENTER_ALIGNMENT);
+			sentence.setForeground(Color.white);
+			inst.add(sentence);
+		}
+		
+		JLabel space2 = new JLabel("                           ");
+		space2.setFont(new Font("Arial", Font.BOLD, 150));
+		space2.setAlignmentX(Component.CENTER_ALIGNMENT);
+		inst.add(space2);
+		
+        JButton back = new JButton("<- Back");
+        back.addActionListener(this);
+        back.setActionCommand("cb");
+        back.setForeground(Color.white);
+        back.setBackground(Color.darkGray);
+        back.setFont(new Font("Impact", Font.PLAIN, 40));
+        back.setAlignmentX(Component.CENTER_ALIGNMENT);
+        inst.add(back);
+		
 		return inst;
 	}
 
 	@Override
 	Panel createAndGetGame() {
-		Panel game = new Panel();
-		game.setLayout(new BoxLayout(game, BoxLayout.PAGE_AXIS));
-		// game.setPreferredSize(new Dimension(500, 500));
+		game = new Panel();
+		game.setLayout(new FlowLayout());
 		
 		mineNum = 15;
 		
 		placeMine();
-		Panel buttonPanel = new Panel();
+		buttonPanel = new Panel();
 
 		buttonPanel.setLayout(new GridLayout(10, 10));
 
@@ -47,7 +79,7 @@ public class Minesweeper extends GridGame {
 			for (int j = 0; j < 10; j++) {
 				mineButtons[j][i] = new JButton(" ");
 				mineButtons[j][i].setFont(new Font("Arial", Font.BOLD, 12));
-				mineButtons[j][i].setPreferredSize(new Dimension(50, 50));
+				mineButtons[j][i].setPreferredSize(new Dimension(55, 55));
 				mineButtons[j][i].addActionListener(this);
 				mineButtons[j][i].addMouseListener(this);
 				mineButtons[j][i].setActionCommand("h" + j + "" + i);
@@ -194,6 +226,9 @@ public class Minesweeper extends GridGame {
 			} else {
 				flood(x, y);
 			}
+		}
+		else if(("" + e.getActionCommand()).equals("cb")){
+			cdLayout.show(program, "menu");
 		}
 	}
 
