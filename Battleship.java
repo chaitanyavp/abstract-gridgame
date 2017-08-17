@@ -4,21 +4,27 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Panel;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
 public class Battleship extends GridGame {
 
-	int egrid[][] = new int[10][10]; // Grid that enemy interacts with
+	private int egrid[][] = new int[10][10]; // Grid that enemy interacts with
 	// 0 means the tile is empty, 1 means there's a ship, 2 means that tile has
 	// already been hit
 
-	JButton playerBoard[][]; // buttons representing pgrid
-	JLabel enemyBoard[][]; // labels representing egrid
+	private JButton playerBoard[][]; // buttons representing pgrid
+	private JLabel enemyBoard[][]; // labels representing egrid
 
-	JLabel status; // shows status of game
-	JLabel score; // shows score
+	private JLabel status; // shows status of game
+	private JLabel score; // shows score
+
+	private int shipsToPlace = 3; // For player's first three moves to be ship
+									// placement
+	private int phits = 10; // number of hits required for player to win
+	private int ehits = 10; // number of hits required for enemy to win
 
 	public Battleship() {
 		// TODO Auto-generated constructor stub
@@ -26,7 +32,7 @@ public class Battleship extends GridGame {
 
 	public void init() {
 		super.init();
-		addShips();
+		placeEnemyShips();
 		addPowerUps();
 		addEnemyPowerUps();
 	}
@@ -52,7 +58,7 @@ public class Battleship extends GridGame {
 				playerBoard[j][i].setPreferredSize(new Dimension(55, 50));
 				playerBoard[j][i].setFont(new Font("Arial", Font.PLAIN, 10));
 				playerBoard[j][i].addActionListener(this);
-				playerBoard[j][i].setActionCommand(j + "" + i);
+				playerBoard[j][i].setActionCommand("p" + j + "" + i);
 				playerBoard[j][i].setForeground(Color.lightGray);
 				playerBoard[j][i].setBackground(Color.darkGray);
 				playerBoard[j][i].addMouseListener(this);
@@ -107,7 +113,13 @@ public class Battleship extends GridGame {
 		return game;
 	}
 
-	public void addShips() { // places ships in the enemy's behalf
+	private void placePlayerShip(int x, int y) { // place the player's ship at
+													// (x,y). Places ships in
+													// descending order of size.
+		shipsToPlace--;
+	}
+
+	private void placeEnemyShips() { // places ships in the enemy's behalf
 
 		// Places the ship of length 5
 		int s51 = (int) (Math.random() * 6); // mostly random numbers
@@ -141,7 +153,7 @@ public class Battleship extends GridGame {
 
 	}
 
-	public void addPowerUps() { // adds the powerUps on the user's grid
+	private void addPowerUps() { // adds the powerUps on the user's grid
 		for (int i = 0; i < 4; i++) {
 
 			int x = (int) (Math.random() * 10);
@@ -156,7 +168,7 @@ public class Battleship extends GridGame {
 		}
 	}
 
-	public void addEnemyPowerUps() {// adds powerups on enemy grid
+	private void addEnemyPowerUps() {// adds powerups on enemy grid
 		for (int i = 0; i < 4; i++) {
 			int x = (int) (Math.random() * 10);
 			int y = (int) (Math.random() * 10);
@@ -167,6 +179,49 @@ public class Battleship extends GridGame {
 			}
 
 			egrid[x][y] = 2;
+		}
+	}
+
+	private void enemyMove() {// enemy makes a move
+
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
+
+		if (e.getActionCommand().charAt(0) == 'p') { // To process player moves.
+			int x = Integer.parseInt("" + e.getActionCommand().charAt(1));
+			int y = Integer.parseInt("" + e.getActionCommand().charAt(2));
+
+			System.out.println(x + ", " + y);
+
+			if (shipsToPlace > 0) {
+				placePlayerShip(x, y);
+			} else {
+				boolean goAgain = false;
+
+				if (pgrid[x][y] == 1) { // If player lands a hit
+					playerBoard[x][y].setBackground(Color.red);
+					status.setText("             You got a hit");
+					phits--;
+				} else if (pgrid[x][y] == 2) { // If player hits a powerup
+					playerBoard[x][y].setBackground(Color.magenta);
+					goAgain = true;
+				} else { // If player misses
+					status.setText("             You missed");
+					playerBoard[x][y].setBackground(Color.lightGray);
+				}
+
+				playerBoard[x][y].setEnabled(false);
+
+				if (!goAgain) // If the player did get a powerup
+					enemyMove();
+
+				score.setText(
+						"You have " + phits + " hits left.                                                   Enemy has "
+								+ ehits + " hits left.");
+
+			}
 		}
 	}
 
