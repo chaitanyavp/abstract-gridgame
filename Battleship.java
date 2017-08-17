@@ -23,6 +23,8 @@ public class Battleship extends GridGame {
 
 	private int shipsToPlace = 3; // For player's first three moves to be ship
 									// placement
+	private int[] longShipCoords;
+
 	private int phits = 10; // number of hits required for player to win
 	private int ehits = 10; // number of hits required for enemy to win
 
@@ -35,6 +37,7 @@ public class Battleship extends GridGame {
 		placeEnemyShips();
 		addPowerUps();
 		addEnemyPowerUps();
+		disableRestrictedTiles(0, 0);
 	}
 
 	@Override
@@ -76,7 +79,7 @@ public class Battleship extends GridGame {
 
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
-				// Label1[j][i] = new JLabel(""+letter1+(j+1));
+				// enemyBoard[j][i] = new JLabel(""+letter1+(j+1));
 				enemyBoard[j][i] = new JLabel(createImageIcon("tile.jpg"));
 				enemyBoard[j][i].setPreferredSize(new Dimension(50, 50));
 				enemyBoard[j][i].setFont(new Font("Arial", Font.PLAIN, 14));
@@ -116,7 +119,142 @@ public class Battleship extends GridGame {
 	private void placePlayerShip(int x, int y) { // place the player's ship at
 													// (x,y). Places ships in
 													// descending order of size.
+		if (shipsToPlace == 3) {
+			longShipCoords = new int[2];
+			longShipCoords[0] = x;
+			longShipCoords[1] = y;
+
+			// creates long ship at x,y on egrid
+			for (int i = 0; i < 5; i++)
+				egrid[x + i][y] = 1;
+
+			// makes ship tiles blue on enemy's board
+			for (int counter = 0; counter < 5; counter++)
+				enemyBoard[x + counter][y].setIcon(createImageIcon("tileship.jpg"));
+
+		}
+
+		else if (shipsToPlace == 2) {
+			// create medium ship at x,y on egrid
+
+			egrid[x][y] = 1;
+			egrid[x][y + 1] = 1;
+			egrid[x][y + 2] = 1;
+
+			// make ship tiles blue on enemy's board
+			enemyBoard[x][y].setIcon(createImageIcon("tileship.jpg"));
+			enemyBoard[x][y + 1].setIcon(createImageIcon("tileship.jpg"));
+			enemyBoard[x][y + 2].setIcon(createImageIcon("tileship.jpg"));
+		}
+
+		else if (shipsToPlace == 1) {
+			// create small ship at x,y on egrid
+			egrid[x][y] = 1;
+			egrid[x][y + 1] = 1;
+
+			// make ship tiles blue on enemy's board
+			enemyBoard[x][y].setIcon(createImageIcon("tileship.jpg"));
+			enemyBoard[x][y + 1].setIcon(createImageIcon("tileship.jpg"));
+
+			status.setText("             Click to attack");
+		}
 		shipsToPlace--;
+		enableAllTiles();
+		disableRestrictedTiles(x, y);
+	}
+
+	private void disableRestrictedTiles(int x, int y) { // Prevents player from
+														// placing ships out of
+														// bounds.
+		if (shipsToPlace == 3) {
+			for (int i = 6; i < 10; i++) {
+				for (int j = 0; j < 10; j++) {
+					playerBoard[i][j].setEnabled(false);
+					playerBoard[i][j].setBackground(Color.lightGray);
+					playerBoard[i][j].setName((j) + "" + (i) + "f");
+				}
+
+			}
+		} else if (shipsToPlace == 2) {
+			// disables long ship tiles
+			for (int i = 0; i < 3; i++) {
+				if (y - i >= 0) {
+					for (int j = 0; j < 5; j++) {
+						playerBoard[x + j][y - i].setEnabled(false);
+						playerBoard[x + j][y - i].setBackground(Color.lightGray);
+						playerBoard[x + j][y - i].setName((x + j) + "" + (y - i) + "f");
+					}
+				}
+			}
+
+			// disables restricted tiles
+			for (int i = 8; i < 10; i++) {
+				for (int j = 0; j < 10; j++) {
+					playerBoard[j][i].setEnabled(false);
+					playerBoard[j][i].setBackground(Color.lightGray);
+					playerBoard[j][i].setName(j + "" + i + "f");
+				}
+			}
+
+			status.setText("             Click to place the second ship");
+		} else if (shipsToPlace == 1) {
+			// disable medium ship tiles
+			if (y - 1 >= 0) {
+				playerBoard[x][y - 1].setEnabled(false);
+				playerBoard[x][y - 1].setBackground(Color.lightGray);
+				playerBoard[x][y - 1].setName(x + "" + (y - 1) + "f");
+			}
+			playerBoard[x][y].setEnabled(false);
+			playerBoard[x][y + 1].setEnabled(false);
+			playerBoard[x][y + 2].setEnabled(false);
+
+			playerBoard[x][y].setBackground(Color.lightGray);
+			playerBoard[x][y + 1].setBackground(Color.lightGray);
+			playerBoard[x][y + 2].setBackground(Color.lightGray);
+
+			playerBoard[x][y].setName(x + "" + y + "f");
+			playerBoard[x][y + 1].setName(x + "" + (y + 1) + "f");
+			playerBoard[x][y + 2].setName(x + "" + (y + 2) + "f");
+
+			// disables long ship tiles
+			for (int counter1 = 0; counter1 < 2; counter1++) {
+				if (longShipCoords[1] - counter1 >= 0) {
+
+					for (int longcount = 0; longcount < 5; longcount++) {
+
+						playerBoard[longShipCoords[0] + longcount][longShipCoords[1] - counter1].setEnabled(false);
+						playerBoard[longShipCoords[0] + longcount][longShipCoords[1] - counter1]
+								.setBackground(Color.lightGray);
+						playerBoard[longShipCoords[0] + longcount][longShipCoords[1] - counter1]
+								.setName((longShipCoords[0] + longcount) + "" + (longShipCoords[1] - counter1) + "f");
+					}
+				}
+			}
+
+			// disable restricted tiles
+			for (int i = 9; i < 10; i++) {
+				for (int j = 0; j < 10; j++) {
+					playerBoard[j][i].setEnabled(false);
+					playerBoard[j][i].setBackground(Color.lightGray);
+					playerBoard[j][i].setName(j + "" + i + "f");
+				}
+			}
+
+			status.setText("             Click to place the third ship");
+		} else {
+			enableAllTiles();
+		}
+	}
+
+	private void enableAllTiles() { // Enables all buttons on the player's board
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < 10; j++) {
+				playerBoard[j][i].setEnabled(true);
+				playerBoard[j][i].setName(j + "" + i + "t");
+				playerBoard[j][i].setForeground(Color.lightGray);
+				playerBoard[j][i].setBackground(Color.darkGray);
+			}
+		}
 	}
 
 	private void placeEnemyShips() { // places ships in the enemy's behalf
