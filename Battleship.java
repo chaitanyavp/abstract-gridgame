@@ -331,8 +331,6 @@ public class Battleship extends GridGame {
 			int x = Integer.parseInt("" + e.getActionCommand().charAt(1));
 			int y = Integer.parseInt("" + e.getActionCommand().charAt(2));
 
-			System.out.println(x + ", " + y);
-
 			if (shipsToPlace > 0) {
 				placePlayerShip(x, y);
 			} else {
@@ -370,15 +368,98 @@ public class Battleship extends GridGame {
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+	public void mouseEntered(MouseEvent e) { // turns tiles yellow during ship
+		// selection
+		if (shipsToPlace > 0) {
+			char isTileEnabled = ("" + e.getComponent()).charAt(22);
 
+			if (isTileEnabled == 't') {
+
+				int x = Integer.parseInt(("" + e.getComponent()).charAt(20) + "");
+				int y = Integer.parseInt(("" + e.getComponent()).charAt(21) + "");
+				playerBoard[x][y].setBackground(Color.yellow);
+
+				if (shipsToPlace == 3) {
+					for (int i = 1; i < 5; i++) {
+						if ((x + i) < 10)
+							playerBoard[x + i][y].setBackground(Color.yellow);
+					}
+				} else if (shipsToPlace == 2) {
+					if (y + 1 < 10)
+						playerBoard[x][y + 1].setBackground(Color.yellow);
+					if (y + 2 < 10)
+						playerBoard[x][y + 2].setBackground(Color.yellow);
+				} else if (shipsToPlace == 1) {
+					if (y + 1 < 10)
+						playerBoard[x][y + 1].setBackground(Color.yellow);
+				}
+			}
+		}
 	}
 
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+	public void mouseExited(MouseEvent e) {// changes tiles back to normal after
+		// being turned yellow
 
+		if (shipsToPlace > 0) {
+			int x = Integer.parseInt(("" + e.getComponent()).charAt(20) + "");
+			int y = Integer.parseInt(("" + e.getComponent()).charAt(21) + "");
+			
+			char isTileEnabled = ("" + e.getComponent()).charAt(22);
+			
+			if (isTileEnabled == 't')
+				playerBoard[x][y].setBackground(Color.darkGray);
+
+			if (shipsToPlace == 3) {
+
+				for (int i = 1; i < 5; i++) {
+
+					if ((x + i) < 10) {
+
+						isTileEnabled = playerBoard[x + i][y].getName().charAt(2);
+
+						if (isTileEnabled == 't')
+							playerBoard[x + i][y].setBackground(Color.darkGray);
+						else
+							playerBoard[x + i][y].setBackground(Color.lightGray);
+
+					}
+				}
+
+			} else if (shipsToPlace == 2) {
+				if (y + 1 < 10) {// first tile
+
+					isTileEnabled = playerBoard[x][y + 1].getName().charAt(2);
+
+					if (isTileEnabled == 't')
+						playerBoard[x][y + 1].setBackground(Color.darkGray);
+					else
+						playerBoard[x][y + 1].setBackground(Color.lightGray);
+
+				}
+
+				if (y + 2 < 10) {// second tile
+					isTileEnabled = playerBoard[x][y + 2].getName().charAt(2);
+
+					if (isTileEnabled == 't')
+						playerBoard[x][y + 2].setBackground(Color.darkGray);
+					else
+						playerBoard[x][y + 2].setBackground(Color.lightGray);
+				}
+
+			} else if (shipsToPlace == 1) {
+
+				if (y + 1 < 10) {// first tile
+
+					isTileEnabled = playerBoard[x][y + 1].getName().charAt(2);
+
+					if (isTileEnabled == 't')
+						playerBoard[x][y + 1].setBackground(Color.darkGray);
+					else
+						playerBoard[x][y + 1].setBackground(Color.lightGray);
+
+				}
+			}
+		}
 	}
 
 	@Override
