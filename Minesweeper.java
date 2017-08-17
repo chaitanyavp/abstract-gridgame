@@ -83,7 +83,7 @@ public class Minesweeper extends GridGame {
 				mineButtons[j][i].addActionListener(this);
 				mineButtons[j][i].addMouseListener(this);
 				mineButtons[j][i].setActionCommand("h" + j + "" + i);
-				mineButtons[j][i].setBackground(Color.lightGray);
+				mineButtons[j][i].setBackground(Color.darkGray);
 				mineButtons[j][i].setName("unflagged");
 				buttonPanel.add(mineButtons[j][i]);
 			}
@@ -244,7 +244,7 @@ public class Minesweeper extends GridGame {
 				mineButtons[x][y].setName("flagged");
 				labelNum++;
 			} else if (mineButtons[x][y].getName().equals("flagged")) {
-				mineButtons[x][y].setBackground(Color.lightGray);
+				mineButtons[x][y].setBackground(Color.darkGray);
 				mineButtons[x][y].setName("unflagged");
 				labelNum--;
 			}
