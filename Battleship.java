@@ -1,11 +1,14 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -38,6 +41,10 @@ public class Battleship extends GridGame {
 	private int conflictX = 0; // If enemy lands a hit in the middle of a ship
 	private int conflictY = 0;
 
+	private JLabel insPic;
+	private JLabel insText;
+	private int insCont = -1;
+
 	public Battleship() {
 		// TODO Auto-generated constructor stub
 	}
@@ -52,8 +59,48 @@ public class Battleship extends GridGame {
 
 	@Override
 	Panel createAndGetInst() {
-		// TODO Auto-generated method stub
-		return new Panel();
+
+		Panel ins = new Panel();
+		ins.setLayout(new BoxLayout(ins, BoxLayout.PAGE_AXIS));
+		insPic = new JLabel(createImageIcon("ship1.jpg"));
+		insPic.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		insText = new JLabel("When you first start the game, you must choose where to place your ships.");
+		insText.setFont(new Font("Arial", Font.PLAIN, 30));
+		insText.setForeground(Color.white);
+		insText.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		JLabel spc1 = new JLabel("                           ");
+		spc1.setFont(new Font("Arial", Font.BOLD, 50));
+		spc1.setAlignmentX(Component.CENTER_ALIGNMENT);
+		JLabel spc2 = new JLabel("                           ");
+		spc2.setFont(new Font("Arial", Font.BOLD, 50));
+		spc2.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		JButton cont = new JButton("Next ->");
+		cont.addActionListener(this);
+		cont.setActionCommand("cu");
+		cont.setForeground(Color.white);
+		cont.setBackground(Color.darkGray);
+		cont.setFont(new Font("Impact", Font.PLAIN, 40));
+		cont.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		JButton back = new JButton("<- Back");
+		back.addActionListener(this);
+		back.setActionCommand("cb");
+		back.setForeground(Color.white);
+		back.setBackground(Color.darkGray);
+		back.setFont(new Font("Impact", Font.PLAIN, 40));
+		back.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		ins.add(insText);
+		ins.add(spc1);
+		ins.add(insPic);
+		ins.add(spc2);
+		ins.add(cont);
+		ins.add(back);
+
+		return ins;
 	}
 
 	@Override
@@ -591,15 +638,68 @@ public class Battleship extends GridGame {
 			reset();
 		}
 	}
-	
-	private void reset(){
+
+	private void reset() {
 		System.exit(0);
 	}
-	
+
+	private void insProgression() {// changes what is displayed in the
+		// instructions screen
+		switch (insCont) {
+		case 0: {
+			insText.setText("When you first start the game, you must choose where to place your ships.");
+			break;
+		}
+		case 1: {
+			insText.setText("These are the ships:");
+			break;
+		}
+		case 2: {
+			insText.setText("Some areas are disabled to prevent overlaps and to ensure the ships stay on the board.");
+			// "<html><div align=\"center\">Some areas are disabled to prevent
+			// overlaps <br/> and to make sure the ships don't go off the
+			// board.</div></html>"
+			break;
+		}
+		case 3: {
+			insText.setText("When placed, ships will appear on the grid on the right side.");
+			break;
+		}
+		case 4: {
+			insText.setText("The enemy will try to attack these ships.");
+			break;
+		}
+		case 5: {
+			insText.setText("You must attack the Enemy's ships, which will be on the left grid after ship selection.");
+			break;
+		}
+		case 6: {
+			insText.setText("PowerUps allow you to go again. The enemy also can also get PowerUps");
+			break;
+		}
+		default: {
+			insText.setText("When you first start the game, you must choose where to place your ships.");
+			insCont = 0;
+
+			cdLayout.show(program, "menu");
+		}
+		}
+		insPic.setIcon(createImageIcon("ship" + (insCont + 1) + ".jpg"));
+	}
+
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 
-		if (e.getActionCommand().charAt(0) == 'p') { // To process player moves.
+		if (("" + e.getActionCommand()).charAt(0) == 'c') { // for instructions
+			if (("" + e.getActionCommand()).charAt(1) == 'u')
+				insCont++;
+			else
+				insCont--;
+			insProgression();
+		}
+
+		else if (e.getActionCommand().charAt(0) == 'p') { // To process player
+															// moves.
 			int x = Integer.parseInt("" + e.getActionCommand().charAt(1));
 			int y = Integer.parseInt("" + e.getActionCommand().charAt(2));
 
