@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 public class Battleship extends GridGame {
 
@@ -27,12 +28,14 @@ public class Battleship extends GridGame {
 
 	private int phits = 10; // number of hits required for player to win
 	private int ehits = 10; // number of hits required for enemy to win
-	
-	private boolean enemyLastShotHit = false; // If the enemy's last move was a hit.
+
+	private boolean enemyLastShotHit = false; // If the enemy's last move was a
+												// hit.
 	private int enemyLastHitX; // coordinates of enemy's last hit
 	private int enemyLastHitY;
-	private int checkDirection = 5;// Tells enemy which direction to check once a hit is made.
-	private int conflictX = 0; // If the enemy lands a hit in the middle of a ship
+	private int checkDirection = 5;// Tells enemy which direction to check once
+									// a hit is made.
+	private int conflictX = 0; // If enemy lands a hit in the middle of a ship
 	private int conflictY = 0;
 
 	public Battleship() {
@@ -333,7 +336,7 @@ public class Battleship extends GridGame {
 
 		int x = (int) (Math.random() * 10);
 		int y = (int) (Math.random() * 10);
-		
+
 		// Make sure the enemy hits in a checkerboard pattern.
 		if (x % 2 == 0) { // if x is even, y should be odd
 			if (y % 2 == 0) {
@@ -349,9 +352,10 @@ public class Battleship extends GridGame {
 				else
 					y--;
 		}
-		
-		if (enemyLastShotHit && getDifficulty() > 0) { // /if last shot was a hit, enemy
-												// will try to
+
+		if (enemyLastShotHit && getDifficulty() > 0) { // /if last shot was a
+														// hit, enemy
+			// will try to
 			// check around it only run if difficulty is
 			// normal or above
 			x = enemyLastHitX;
@@ -403,7 +407,7 @@ public class Battleship extends GridGame {
 				}
 
 				if (y + 1 < 10 && y - 1 >= 0) {// branch for multiple vertical
-													// hits
+												// hits
 					if (egrid[x][y + 1] == 1 && egrid[x][y - 1] == 1) {
 						// System.out.println("conflict at "+ex+","+ey);
 						enemyLastHitX = x;
@@ -481,7 +485,7 @@ public class Battleship extends GridGame {
 				}
 
 				if (y + 1 < 10 && y - 1 >= 0) {// branch for multiple vertical
-													// hits
+												// hits
 					if (egrid[x][y + 1] == 1 && egrid[x][y - 1] == 1) {
 						// System.out.println("conflict at "+ex+","+ey);
 						enemyLastHitX = x;
@@ -521,7 +525,7 @@ public class Battleship extends GridGame {
 
 		int tryCount = 0;
 		while (egrid[x][y] == 3) { // makes sure enemy doesn't hit same spot
-										// twice
+									// twice
 			x = (int) (Math.random() * 10);
 			y = (int) (Math.random() * 10);
 			if (tryCount < 20 && getDifficulty() > 0) {
@@ -568,18 +572,28 @@ public class Battleship extends GridGame {
 		egrid[x][y] = 3;
 
 		checkEnemyWin();
-		
+
 		if (goAgain)
 			enemyMove();
 
 	}
-	
+
 	private void checkPlayerWin() {
-		
+		if (phits == 0) {
+			JOptionPane.showMessageDialog(null, "You Win");
+			reset();
+		}
+	}
+
+	private void checkEnemyWin() {
+		if (ehits == 0) {
+			JOptionPane.showMessageDialog(null, "Enemy Wins");
+			reset();
+		}
 	}
 	
-	private void checkEnemyWin() {
-		
+	private void reset(){
+		System.exit(0);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -607,9 +621,9 @@ public class Battleship extends GridGame {
 				}
 
 				playerBoard[x][y].setEnabled(false);
-				
+
 				checkPlayerWin();
-				
+
 				if (!goAgain) // If the player did get a powerup
 					enemyMove();
 
@@ -622,7 +636,7 @@ public class Battleship extends GridGame {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent arg0) {
+	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 
 	}
@@ -723,13 +737,13 @@ public class Battleship extends GridGame {
 	}
 
 	@Override
-	public void mousePressed(MouseEvent arg0) {
+	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent arg0) {
+	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
 
 	}
