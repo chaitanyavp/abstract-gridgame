@@ -27,6 +27,13 @@ public class Battleship extends GridGame {
 
 	private int phits = 10; // number of hits required for player to win
 	private int ehits = 10; // number of hits required for enemy to win
+	
+	private boolean enemyLastShotHit = false; // If the enemy's last move was a hit.
+	private int enemyLastHitX; // coordinates of enemy's last hit
+	private int enemyLastHitY;
+	private int checkDirection = 5;// Tells enemy which direction to check once a hit is made.
+	private int conflictX = 0; // If the enemy lands a hit in the middle of a ship
+	private int conflictY = 0;
 
 	public Battleship() {
 		// TODO Auto-generated constructor stub
@@ -322,8 +329,259 @@ public class Battleship extends GridGame {
 
 	private void enemyMove() {// enemy makes a move
 
-	}
+		boolean goAgain = false;
 
+		int x = (int) (Math.random() * 10);
+		int y = (int) (Math.random() * 10);
+		
+		// Make sure the enemy hits in a checkerboard pattern.
+		if (x % 2 == 0) { // if x is even, y should be odd
+			if (y % 2 == 0) {
+				if (y + 1 < 10)
+					y++;
+				else
+					y--;
+			}
+		} else { // if x is odd, y should be even
+			if (y % 2 == 1)
+				if (y + 1 < 10)
+					y++;
+				else
+					y--;
+		}
+		
+		if (enemyLastShotHit && getDifficulty() > 0) { // /if last shot was a hit, enemy
+												// will try to
+			// check around it only run if difficulty is
+			// normal or above
+			x = enemyLastHitX;
+			y = enemyLastHitY;
+
+			if (getDifficulty() != 2) {
+
+				if (conflictX == 4) {
+					conflictX = 0;
+				} else if (conflictY == 4) {
+					conflictY = 0;
+					// System.out.println("conflict has been reset ");
+				}
+
+				if (conflictX != 0) {
+					if (conflictX == 1)
+						x++;
+					else {
+						x--;
+					}
+					enemyLastHitX = x;
+					enemyLastHitY = y;
+					conflictX = 4;
+				} else if (conflictY == 1) {
+					// System.out.println("checking down");
+					conflictY = 4;
+					y++;
+				}
+
+				if (x + 1 < 10 && x - 1 >= 0) {// branch for multiple hits
+					if (egrid[x + 1][y] == 1 && egrid[x - 1][y] == 1) {
+						// System.out.println("conflict at "+ex+","+ey);
+						enemyLastHitX = x;
+						enemyLastHitY = y;
+						if (x + 2 < 10) {
+							if (egrid[x + 2][y] == 1) {
+								conflictX = 1;
+								x--;
+							} else {
+								conflictX = 2;
+								x++;
+							}
+						} else {
+							conflictX = 2;
+							x++;
+						}
+
+					}
+				}
+
+				if (y + 1 < 10 && y - 1 >= 0) {// branch for multiple vertical
+													// hits
+					if (egrid[x][y + 1] == 1 && egrid[x][y - 1] == 1) {
+						// System.out.println("conflict at "+ex+","+ey);
+						enemyLastHitX = x;
+						enemyLastHitY = y;
+						conflictY = 1;
+						y--;
+					}
+				}
+
+				if (conflictX == 0 && conflictY == 0) {
+
+					if (checkDirection == 0) // checks in each direction
+						x++;
+					else if (checkDirection == 1)
+						x--;
+					else if (checkDirection == 2)
+						y++;
+					else if (checkDirection == 3) {
+						y--;
+						enemyLastShotHit = false;
+					}
+
+					if (x < 0) // making sure coordinates stay within bounds
+						x = 0;
+					else if (x > 9)
+						x = 9;
+					if (y < 0)
+						y = 0;
+					else if (y > 9)
+						y = 9;
+				}
+			} // medium diff
+
+			else if (getDifficulty() == 2) {// hard difficulty
+				// gives enemy unfair advantage
+
+				if (conflictX == 4)
+					conflictX = 0;
+				if (conflictY == 4)
+					conflictY = 0;
+
+				if (conflictX != 0) {
+					if (conflictX == 1)
+						x++;
+					else {
+						x--;
+					}
+					enemyLastHitX = x;
+					enemyLastHitY = y;
+					conflictX = 4;
+				} else if (conflictY == 1) {
+					conflictY = 4;
+					y++;
+				}
+
+				if (x + 1 < 10 && x - 1 >= 0) {// branch for multiple hits
+					if (egrid[x + 1][y] == 1 && egrid[x - 1][y] == 1) {
+						// System.out.println("conflict at "+ex+","+ey);
+						enemyLastHitX = x;
+						enemyLastHitY = y;
+						if (x + 2 < 10) {
+							if (egrid[x + 2][y] == 1) {
+								conflictX = 1;
+								x--;
+							} else {
+								conflictX = 2;
+								x++;
+							}
+						} else {
+							conflictX = 2;
+							x++;
+						}
+
+					}
+				}
+
+				if (y + 1 < 10 && y - 1 >= 0) {// branch for multiple vertical
+													// hits
+					if (egrid[x][y + 1] == 1 && egrid[x][y - 1] == 1) {
+						// System.out.println("conflict at "+ex+","+ey);
+						enemyLastHitX = x;
+						enemyLastHitY = y;
+						conflictY = 1;
+						y--;
+					}
+				}
+
+				if (conflictX == 0 && conflictY == 0) {
+					if (y + 1 < 10) {
+						if (egrid[x][y + 1] == 1)// if y+1 is a hit and it is
+													// within bounds, it will go
+													// there
+							y++;
+					}
+
+					if (y - 1 >= 0) {
+						if (egrid[x][y - 1] == 1)
+							y--;
+					}
+					if (x + 1 < 10) {
+						if (egrid[x + 1][y] == 1)
+							x++;
+					}
+					if (x - 1 >= 0) {
+						if (egrid[x - 1][y] == 1) {
+							x--;
+							enemyLastShotHit = false;
+						}
+					}
+				}
+
+			} // hard diff
+			checkDirection++;
+		} // lasthit
+
+		int tryCount = 0;
+		while (egrid[x][y] == 3) { // makes sure enemy doesn't hit same spot
+										// twice
+			x = (int) (Math.random() * 10);
+			y = (int) (Math.random() * 10);
+			if (tryCount < 20 && getDifficulty() > 0) {
+				if (x % 2 == 0) { // if x is even, y should be odd
+					if (y % 2 == 0) { // for checkerboard pattern
+						if (y + 1 < 10)
+							y++;
+						else
+							y--;
+					}
+				} else { // if x is odd, y should be even
+					if (y % 2 == 1)
+						if (y + 1 < 10)
+							y++;
+						else
+							y--;
+				}
+			}
+			tryCount++;
+		}
+
+		if (egrid[x][y] == 1) { // hit branch
+			enemyBoard[x][y].setIcon(createImageIcon("tilehit.jpg"));
+			status.setText("             Enemy got a hit");
+			enemyLastShotHit = true; // starts ai
+			checkDirection = 0;
+			if (conflictX == 0 && conflictY == 0) {
+				enemyLastHitX = x; // stores x and y values
+				enemyLastHitY = y;
+			}
+			ehits--; // keeps score
+		}
+
+		else if (egrid[x][y] == 2) { // poweup branch
+			enemyBoard[x][y].setIcon(createImageIcon("tilepower.jpg"));
+			status.setText("             Enemy got a PowerUp");
+			goAgain = true;
+		}
+
+		else
+			// miss branch
+			enemyBoard[x][y].setIcon(createImageIcon("tilemiss.jpg"));
+
+		egrid[x][y] = 3;
+
+		checkEnemyWin();
+		
+		if (goAgain)
+			enemyMove();
+
+	}
+	
+	private void checkPlayerWin() {
+		
+	}
+	
+	private void checkEnemyWin() {
+		
+	}
+	
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 
@@ -349,7 +607,9 @@ public class Battleship extends GridGame {
 				}
 
 				playerBoard[x][y].setEnabled(false);
-
+				
+				checkPlayerWin();
+				
 				if (!goAgain) // If the player did get a powerup
 					enemyMove();
 
@@ -403,9 +663,9 @@ public class Battleship extends GridGame {
 		if (shipsToPlace > 0) {
 			int x = Integer.parseInt(("" + e.getComponent()).charAt(20) + "");
 			int y = Integer.parseInt(("" + e.getComponent()).charAt(21) + "");
-			
+
 			char isTileEnabled = ("" + e.getComponent()).charAt(22);
-			
+
 			if (isTileEnabled == 't')
 				playerBoard[x][y].setBackground(Color.darkGray);
 
