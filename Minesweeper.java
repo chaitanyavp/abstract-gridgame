@@ -77,9 +77,6 @@ public class Minesweeper extends GridGame {
 		game = new Panel();
 		game.setLayout(new FlowLayout());
 		
-		mineNum = 15;
-		
-		placeMine();
 		buttonPanel = new Panel();
 
 		buttonPanel.setLayout(new GridLayout(10, 10));
@@ -223,11 +220,22 @@ public class Minesweeper extends GridGame {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-
+		
+		if (e.getActionCommand().charAt(0) == 'm'){
+			if (getDifficulty() == 0) {
+				mineNum = 8;
+			} else if (getDifficulty() == 1) {
+				mineNum = 14;
+			} else {
+				mineNum = 18;
+			}
+			placeMine();
+		}
+		
 		if (("" + e.getActionCommand()).charAt(0) == 'h') {
 			int x = Integer.parseInt("" + ("" + e.getActionCommand()).charAt(1));
 			int y = Integer.parseInt("" + ("" + e.getActionCommand()).charAt(2));
-
+			
 			if (pgrid[x][y] == 1) {
 				System.out.println("mine at " + x + "," + y);
 				mineButtons[x][y].setEnabled(false);
